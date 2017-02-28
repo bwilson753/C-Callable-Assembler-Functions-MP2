@@ -1,0 +1,97 @@
+Script started on Sun Sep 27 17:49:35 2015
+warning: could not update utmp entry
+blade57(1)% cat tiny.s
+        movl $8, %eax
+        addl $3, %eax
+        movl %eax, 0x200
+        int $3
+        .end
+        
+blade57(2)%  i386-as -o tiny.opc tiny.s
+blade57(3)%  i386-ld -N -Ttext 0x1000e0 -o tiny.lnx tiny.opc
+blade57(4)%  disas --full tiny.lnx 
+
+tiny.lnx:     file format a.out-i386-linux
+
+Contents of section .text:
+ 0000 b8080000 0083c003 a3000200 00cc9090  ................
+Contents of section .data:
+Disassembly of section .text:
+00000000 <tiny.opc-100100> movl   $0x8,%eax
+00000005 <tiny.opc-1000fb> addl   $0x3,%eax
+00000008 <tiny.opc-1000f8> movl   %eax,0x200
+0000000d <tiny.opc-1000f3> int3   
+0000000e <tiny.opc-1000f2> nop    
+0000000f <tiny.opc-1000f1> Address 0x10 is out of bounds.
+blade57(5)%  mtip -f tiny.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 1 
+~resetting board #1!
+Please type <CR> to confirm console setting: 
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading tiny.lnx
+.Done.
+
+Download done, setting EIP to 100100.
+Tutor>  d  md 100100
+00100100    b8 08 00 00 00 83 c0 03 a3 00 02 00 00 cc 90 90 ................
+Tutor> rd
+EAX=00000001 EBX=00009e00   EBP=000578ac
+EDX=00000000 ECX=0006ac54   ESP=000578a8
+ESI=00090800 EDI=00051ffc   EIP=00100100
+EFLAGS=0202 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> md 200
+00000200    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> ms 200 00000000
+Tutor> md 200
+00000200    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> rs eip 100100
+Tutor> t
+Exception 1 at EIP=00100105: Debugger interrupt
+Tutor> rd
+EAX=00000008 EBX=00009e00   EBP=000578ac
+EDX=00000000 ECX=0006ac54   ESP=000578a8
+ESI=00090800 EDI=00051ffc   EIP=00100105
+EFLAGS=0302 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> md d 200
+00000200    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> t
+Exception 1 at EIP=00100108: Debugger interrupt
+Tutor> rd
+EAX=0000000b EBX=00009e00   EBP=000578ac
+EDX=00000000 ECX=0006ac54   ESP=000578a8
+ESI=00090800 EDI=00051ffc   EIP=00100108
+EFLAGS=0302 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> md 200
+00000200    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> t
+Exception 1 at EIP=0010010d: Debugger interrupt
+Tutor> rd
+EAX=0000000b EBX=00009e00   EBP=000578ac
+EDX=00000000 ECX=0006ac54   ESP=000578a8
+ESI=00090800 EDI=00051ffc   EIP=0010010d
+EFLAGS=0302 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> md 200
+00000200    0b 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> t
+Exception 3 at EIP=0010010e: Breakpoint
+Tutor> ~q 
+Quit handler: 
+killing process 10177 Leaving board #1
+blade57(6)% exit
+script done on Sun Sep 27 18:01:16 2015

@@ -1,0 +1,221 @@
+Script started on Thu Oct  8 14:38:39 2015
+warning: could not update utmp entry
+blade57(1)% cat printbin1.script
+Script started on Thu Oct  8 14:14:48 2015
+warning: could not update utmp entry
+blade57(1)% make clean
+rm -f *.o *.opc *.syms *.lnx core syms
+blade57(2)% make A=printbin
+/groups/ulab/bin/i386-as -o printbin.opc printbin.s
+/groups/ulab/bin/i386-gcc -g -Wall -Wno-implicit -Wshadow -I/groups/ulab/pcdev/include -c -o printbinc.opc printbinc.c
+/groups/ulab/bin/i386-ld -N -Ttext 1000e0 -o printbin.lnx \
+        /groups/ulab/pcdev/lib/startup0.opc /groups/ulab/pcdev/lib/startup.opc \
+        printbinc.opc printbin.opc /groups/ulab/pcdev/lib/libc.a
+rm -f syms;/groups/ulab/bin/i386-nm -n printbin.lnx>printbin.syms;ln -s printbin.syms syms
+blade57(3)% mtip -b 8 -f printbin.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 8 
+~resetting board #8!
+Please type <CR> to confirm console setting: 
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading printbin.lnx
+.......Done.
+
+Download done, setting EIP to 100100.
+Tutor> go 100100
+number to print in binary: 
+ab
+The binary format for ab is 1010 1011 
+Exception 3 at EIP=00100110: Breakpoint
+Tutor> exit
+No such command: exit, use h command for help
+Tutor> ~q 
+Quit handler: 
+killing process 17633 Leaving board #8
+blade57(4)% exit
+script done on Thu Oct  8 14:17:36 2015
+blade57(2)% cat printbin2.script
+Script started on Thu Oct  8 14:33:11 2015
+warning: could not update utmp entry
+blade57(1)% i386-gdb printbin.lnx
+GDB is free software and you are welcome to distribute copies of it
+ under certain conditions; type "show copying" to see the conditions.
+There is absolutely no warranty for GDB; type "show warranty" for details.
+GDB 4.15.1 (sparc-sun-sunos4.1.3 --target i386-linuxaout), 
+Copyright 1995 Free Software Foundation, Inc...
+(gdb) tar rem /dev/remgdb5 8
+Remote debugging using /dev/remgdb8
+0x100100 in /groups/ulab/pcdev/lib/startup0.opc ()
+(gdb) x/100i ) 0x100100
+0x100100 </groups/ulab/pcdev/lib/startup0.opc>: movl   $0x3ffff0,%esp
+0x100105 </groups/ulab/pcdev/lib/startup0.opc+5>:       movl   $0x0,%ebp
+0x10010a </groups/ulab/pcdev/lib/startup0.opc+10>:      
+    call   0x100110 <startupc>
+0x10010f </groups/ulab/pcdev/lib/startup0.opc+15>:      int3   
+0x100110 <startupc>:    pushl  %ebp
+0x100111 <startupc+1>:  movl   %esp,%ebp
+0x100113 <startupc+3>:  call   0x100266 <clr_bss>
+0x100118 <startupc+8>:  call   0x100278 <init_devio>
+0x10011d <startupc+13>: call   0x100164 <main>
+0x100122 <startupc+18>: leave  
+0x100123 <startupc+19>: ret    
+0x100124 <printbinc.opc>:       outsb  %ds:(%esi),(%dx)
+0x100125 <printbinc.opc+1>:     jne    0x100194 <main+48>
+0x100127 <printbinc.opc+3>:     boundl 0x72(%ebp),%esp
+0x10012a <printbinc.opc+6>:     andb   %dh,0x20(%edi,%ebp,2)
+0x10012e <printbinc.opc+10>:    jo     0x1001a2 <main+62>
+0x100130 <printbinc.opc+12>:    imull  $0x206e6920,0x74(%esi),%ebp
+0x100137 <printbinc.opc+19>:    boundl 0x6e(%ecx),%ebp
+0x10013a <printbinc.opc+22>:    popa   
+0x10013b <printbinc.opc+23>:    jb     0x1001b6 <main+82>
+0x10013d <printbinc.opc+25>:    cmpb   (%eax),%ah
+0x10013f <printbinc.opc+27>:    orb    (%eax),%al
+0x100141 <printbinc.opc+29>:    andl   $0x68540078,%eax
+0x100146 <printbinc.opc+34>:    andb   %ah,%gs:0x69(%edx)
+0x10014a <printbinc.opc+38>:    outsb  %ds:(%esi),(%dx)
+0x10014b <printbinc.opc+39>:    popa   
+0x10014c <printbinc.opc+40>:    jb     0x1001c7 <printbin.opc+15>
+0x10014e <printbinc.opc+42>:    andb   %ah,0x6f(%esi)
+0x100151 <printbinc.opc+45>:    jb     0x1001c0 <printbin.opc+8>
+0x100153 <printbinc.opc+47>:    popa   
+0x100154 <printbinc.opc+48>:    je     0x100176 <main+18>
+0x100156 <printbinc.opc+50>:    outsw  %ds:(%esi),(%dx)
+0x100158 <printbinc.opc+52>:    jb     0x10017a <main+22>
+0x10015a <printbinc.opc+54>:    andl   $0x73692078,%eax
+0x10015f <printbinc.opc+59>:    andb   %ah,0x55000a73
+0x100165 <main+1>:      movl   %esp,%ebp
+0x100167 <main+3>:      subl   $0x4,%esp
+0x10016a <main+6>:      call   0x100810 <__main>
+0x10016f <main+11>:     pushl  $0x100124
+0x100174 <main+16>:     call   0x100818 <printf>
+0x100179 <main+21>:     addl   $0x4,%esp
+0x10017c <main+24>:     leal   0xfffffffc(%ebp),%eax
+0x10017f <main+27>:     pushl  %eax
+0x100180 <main+28>:     pushl  $0x100141
+0x100185 <main+33>:     call   0x100840 <scanf>
+0x10018a <main+38>:     addl   $0x8,%esp
+0x10018d <main+41>:     movzbl 0xfffffffc(%ebp),%eax
+0x100191 <main+45>:     pushl  %eax
+---Type <return> to continue, or q <return> to quit---
+0x100192 <main+46>:     call   0x1001b8 <printbin.opc>
+0x100197 <main+51>:     addl   $0x4,%esp
+0x10019a <main+54>:     movl   %eax,%eax
+0x10019c <main+56>:     pushl  %eax
+0x10019d <main+57>:     movl   0xfffffffc(%ebp),%eax
+0x1001a0 <main+60>:     pushl  %eax
+0x1001a1 <main+61>:     pushl  $0x100144
+0x1001a6 <main+66>:     call   0x100818 <printf>
+0x1001ab <main+71>:     addl   $0xc,%esp
+0x1001ae <main+74>:     xorl   %eax,%eax
+0x1001b0 <main+76>:     jmp    0x1001b4 <main+80>
+0x1001b2 <main+78>:     nop    
+0x1001b3 <main+79>:     nop    
+0x1001b4 <main+80>:     leave  
+0x1001b5 <main+81>:     ret    
+0x1001b6 <main+82>:     nop    
+0x1001b7 <main+83>:     nop    
+0x1001b8 <printbin.opc>:        movl   $0xf0,%ecx
+0x1001bd <printbin.opc+5>:      movl   0x4(%esp,1),%edx
+0x1001c1 <printbin.opc+9>:      andl   %edx,%ecx
+0x1001c3 <printbin.opc+11>:     sarl   $0x4,%ecx
+0x1001c6 <printbin.opc+14>:     movl   $0x0,%eax
+0x1001cb <printbin.opc+19>:     movl   $0x101930,%edx
+0x1001d0 <printbin.opc+24>:     jmp    0x100201 <donibble>
+0x1001d2 <back1>:       movl   $0x101930,%eax
+0x1001d7 <back1+5>:     addl   $0x9,%eax
+0x1001da <back1+8>:     cmpl   %edx,%eax
+0x1001dc <back1+10>:    je     0x1001fb <back2>
+0x1001de <back1+12>:    movb   $0x20,(%edx)
+0x1001e1 <back1+15>:    movl   0x4(%esp,1),%edx
+0x1001e5 <back1+19>:    movl   $0xf,%ecx
+0x1001ea <back1+24>:    andl   %edx,%ecx
+0x1001ec <back1+26>:    movl   $0x0,%eax
+0x1001f1 <back1+31>:    movl   $0x101930,%edx
+0x1001f6 <back1+36>:    addl   $0x5,%edx
+0x1001f9 <back1+39>:    jmp    0x100201 <donibble>
+0x1001fb <back2>:       movl   $0x101930,%eax
+0x100200 <back2+5>:     ret    
+0x100201 <donibble>:    movl   $0x8,%eax
+0x100206 <donibble+5>:  andl   %ecx,%eax
+0x100208 <donibble+7>:  cmpl   $0x0,%eax
+0x10020b <donibble+10>: je     0x100213 <na>
+0x10020d <a>:   movb   $0x31,(%edx)
+0x100210 <a+3>: incl   %edx
+0x100211 <a+4>: jmp    0x100217 <b>
+0x100213 <na>:  movb   $0x30,(%edx)
+0x100216 <na+3>:        incl   %edx
+0x100217 <b>:   movl   $0x4,%eax
+0x10021c <b+5>: andl   %ecx,%eax
+---Type <return> to continue, or q <return> to quit---
+0x10021e <b+7>: cmpl   $0x0,%eax
+0x100221 <b+10>:        je     0x100229 <nba>
+0x100223 <ba>:  movb   $0x31,(%edx)
+(gdb) q
+The program is running.  Quit anyway (and kill it)? (y or n) y
+blade57(2)% exit
+script done on Thu Oct  8 14:35:15 2015
+blade57(3)% cat printbin2.script[8D1[7C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kmtip -b 8 -f printbin.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 8 
+~resetting board #8!
+Please type <CR> to confirm console setting: 
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading printbin.lnx
+.......Done.
+
+Download done, setting EIP to 100100.
+Tutor> b 100201
+Tutor> go 100100
+number to print in binary: 
+ab
+Exception 3 at EIP=00100201: Breakpoint
+Tutor> rd
+EAX=00000000 EBX=00009e00   EBP=003fffe0
+EDX=00101930 ECX=0000000a   ESP=003fffd4
+ESI=00090800 EDI=00101ad4   EIP=00100201
+EFLAGS=0216 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> go
+Exception 3 at EIP=00100201: Breakpoint
+Tutor> rd
+EAX=00000000 EBX=00009e00   EBP=003fffe0
+EDX=00101935 ECX=0000000b   ESP=003fffd4
+ESI=00090800 EDI=00101ad4   EIP=00100201
+EFLAGS=0206 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> go
+The binary format for ab is 1010 1011 
+Exception 3 at EIP=00100110: Breakpoint
+Tutor> ~q 
+Quit handler: 
+killing process 17943 Leaving board #8
+blade57(4)% exit
+script done on Thu Oct  8 14:42:21 2015

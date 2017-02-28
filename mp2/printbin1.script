@@ -1,0 +1,48 @@
+Script started on Thu Oct  8 14:14:48 2015
+warning: could not update utmp entry
+blade57(1)% make clean
+rm -f *.o *.opc *.syms *.lnx core syms
+blade57(2)% make A=printbin
+/groups/ulab/bin/i386-as -o printbin.opc printbin.s
+/groups/ulab/bin/i386-gcc -g -Wall -Wno-implicit -Wshadow -I/groups/ulab/pcdev/include -c -o printbinc.opc printbinc.c
+/groups/ulab/bin/i386-ld -N -Ttext 1000e0 -o printbin.lnx \
+        /groups/ulab/pcdev/lib/startup0.opc /groups/ulab/pcdev/lib/startup.opc \
+        printbinc.opc printbin.opc /groups/ulab/pcdev/lib/libc.a
+rm -f syms;/groups/ulab/bin/i386-nm -n printbin.lnx>printbin.syms;ln -s printbin.syms syms
+blade57(3)% mtip -b 8 -f printbin.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 8 
+~resetting board #8!
+Please type <CR> to confirm console setting: 
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading printbin.lnx
+.......Done.
+
+Download done, setting EIP to 100100.
+Tutor> go 100100
+number to print in binary: 
+ab
+The binary format for ab is 1010 1011 
+Exception 3 at EIP=00100110: Breakpoint
+Tutor> exit
+No such command: exit, use h command for help
+Tutor> ~q 
+Quit handler: 
+killing process 17633 Leaving board #8
+blade57(4)% exit
+script done on Thu Oct  8 14:17:36 2015

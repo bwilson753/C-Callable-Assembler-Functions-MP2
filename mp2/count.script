@@ -1,0 +1,254 @@
+Script started on Sun Oct  4 14:42:11 2015
+warning: could not update utmp entry
+blade57(1)% i386-gdb count.lnx
+GDB is free software and you are welcome to distribute copies of it
+ under certain conditions; type "show copying" to see the conditions.
+There is absolutely no warranty for GDB; type "show warranty" for details.
+GDB 4.15.1 (sparc-sun-sunos4.1.3 --target i386-linuxaout), 
+Copyright 1995 Free Software Foundation, Inc...
+(gdb) tar rem /devf /remgdb6
+Remote debugging using /dev/remgdb6
+0x100100 in /groups/ulab/pcdev/lib/startup0.opc ()
+(gdb) i reg
+eax            0x1      1
+ecx            0x6ac54  437332
+edx            0x0      0
+ebx            0x9e00   40448
+esp            0x578a8  0x578a8
+ebp            0x578ac  0x578ac
+esi            0x90800  591872
+edi            0x51ffc  335868
+eip            0x100100 0x100100
+ps             0x202    514
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) set $eip = 0x100100
+(gdb) x/100i O 0x100100
+0x100100 </groups/ulab/pcdev/lib/startup0.opc>: movl   $0x3ffff0,%esp
+0x100105 </groups/ulab/pcdev/lib/startup0.opc+5>:       movl   $0x0,%ebp
+0x10010a </groups/ulab/pcdev/lib/startup0.opc+10>:      
+    call   0x100110 <startupc>
+0x10010f </groups/ulab/pcdev/lib/startup0.opc+15>:      int3   
+0x100110 <startupc>:    pushl  %ebp
+0x100111 <startupc+1>:  movl   %esp,%ebp
+0x100113 <startupc+3>:  call   0x1001d6 <clr_bss>
+0x100118 <startupc+8>:  call   0x1001e8 <init_devio>
+0x10011d <startupc+13>: call   0x10015c <main>
+0x100122 <startupc+18>: leave  
+0x100123 <startupc+19>: ret    
+0x100124 <startupc+20>: addb   %al,(%eax)
+0x100126 <startupc+22>: addb   %al,(%eax)
+0x100128 <countc.opc>:  popa   
+0x100129 <countc.opc+1>:        popa   
+0x10012a <countc.opc+2>:        boundl 0x61(%ebx),%esp
+0x10012d <countc.opc+5>:        boundl 0x61(%ebx),%esp
+0x100130 <countc.opc+8>:        boundl 0x0(%ebx),%esp
+0x100133 <countc.opc+11>:       pushl  %esp
+0x100134 <countc.opc+12>:       pushl  $0x756e2065
+0x100139 <countc.opc+17>:       insl   (%dx),%es:(%edi)
+0x10013a <countc.opc+18>:       boundl 0x72(%ebp),%esp
+0x10013d <countc.opc+21>:       andb   %ch,0x66(%edi)
+0x100140 <countc.opc+24>:       andb   %ah,0x27(%ecx)
+0x100143 <countc.opc+27>:       jae    0x100165 <main+9>
+0x100145 <countc.opc+29>:       imull  $0x20656874,0x20(%esi),%ebp
+0x10014c <countc.opc+36>:       jae    0x1001c2 <la>
+0x10014e <countc.opc+38>:       jb     0x1001b9 <count.opc+9>
+0x100150 <countc.opc+40>:       outsb  %ds:(%esi),(%dx)
+0x100151 <countc.opc+41>:       addr16 andb %ch,0x73(%ecx)
+0x100155 <countc.opc+45>:       andb   %ah,0x90000a64
+0x10015b <countc.opc+51>:       nop    
+0x10015c <main>:        pushl  %ebp
+---Type <return> to continue, or q <return> to quit---
+0x10015d <main+1>:      movl   %esp,%ebp
+0x10015f <main+3>:      subl   $0xc,%esp
+0x100162 <main+6>:      call   0x100780 <__main>
+0x100167 <main+11>:     leal   0xfffffff4(%ebp),%edx
+0x10016a <main+14>:     movl   $0x100128,%eax
+0x10016f <main+19>:     movl   (%eax),%edx
+0x100171 <main+21>:     movl   %edx,0xfffffff4(%ebp)
+0x100174 <main+24>:     movl   0x4(%eax),%edx
+0x100177 <main+27>:     movl   %edx,0xfffffff8(%ebp)
+0x10017a <main+30>:     movw   0x8(%eax),%dx
+0x10017e <main+34>:     movw   %dx,0xfffffffc(%ebp)
+0x100182 <main+38>:     movb   0xa(%eax),%al
+0x100185 <main+41>:     movb   %al,0xfffffffe(%ebp)
+0x100188 <main+44>:     pushl  $0x61
+0x10018a <main+46>:     leal   0xfffffff4(%ebp),%eax
+0x10018d <main+49>:     pushl  %eax
+0x10018e <main+50>:     call   0x1001b0 <count>
+0x100193 <main+55>:     addl   $0x8,%esp
+0x100196 <main+58>:     movl   %eax,%eax
+0x100198 <main+60>:     pushl  %eax
+0x100199 <main+61>:     pushl  $0x100133
+0x10019e <main+66>:     call   0x100788 <printf>
+0x1001a3 <main+71>:     addl   $0x8,%esp
+0x1001a6 <main+74>:     xorl   %eax,%eax
+0x1001a8 <main+76>:     jmp    0x1001ac <main+80>
+0x1001aa <main+78>:     nop    
+0x1001ab <main+79>:     nop    
+0x1001ac <main+80>:     leave  
+0x1001ad <main+81>:     ret    
+0x1001ae <main+82>:     nop    
+0x1001af <main+83>:     nop    
+0x1001b0 <count>:       movl   $0x0,%eax
+0x1001b5 <count.opc+5>: movl   0x4(%esp,1),%edx
+0x1001b9 <count.opc+9>: movl   0x8(%esp,1),%ecx
+---Type <return> to continue, or q <return> to quit---
+0x1001bd <count.opc+13>:        movl   $0x0,%ebx
+0x1001c2 <la>:  cmpb   %bl,(%edx)
+0x1001c4 <la+2>:        je     0x1001d2 <ld>
+0x1001c6 <la+4>:        cmpb   %cl,(%edx)
+0x1001c8 <la+6>:        je     0x1001cc <lb>
+0x1001ca <la+8>:        jmp    0x1001cf <lc>
+0x1001cc <lb>:  addl   $0x1,%eax
+0x1001cf <lc>:  incl   %edx
+0x1001d0 <lc+1>:        jmp    0x1001c2 <la>
+0x1001d2 <ld>:  ret    
+0x1001d3 <ld+1>:        nop    
+0x1001d4 <support.opc>: int3   
+0x1001d5 <support.opc+1>:       ret    
+0x1001d6 <clr_bss>:     xorl   %eax,%eax
+0x1001d8 <clr_bss+2>:   movl   $0x101008,%edi
+0x1001dd <clr_bss+7>:   movl   $0x101010,%ecx
+0x1001e2 <clr_bss+12>:  subl   %edi,%ecx
+0x1001e4 <clr_bss+14>:  cld    
+0x1001e5 <clr_bss+15>:  repz stosb %al,%es:(%edi)
+0x1001e7 <clr_bss+17>:  ret    
+0x1001e8 <init_devio>:  pushl  %ebp
+0x1001e9 <init_devio+1>:        movl   %esp,%ebp
+0x1001eb <init_devio+3>:        movl   0x55104,%eax
+0x1001f0 <init_devio+8>:        movl   %eax,0x101004
+0x1001f5 <init_devio+13>:       leave  
+0x1001f6 <init_devio+14>:       ret    
+0x1001f7 <init_devio+15>:       nop    
+0x1001f8 <init>:        pushl  %ebp
+0x1001f9 <init+1>:      movl   %esp,%ebp
+0x1001fb <init+3>:      pushl  %ebx
+0x1001fc <init+4>:      cmpl   $0x0,0x8(%ebp)
+0x100200 <init+8>:      jl     0x100230 <init+56>
+0x100202 <init+10>:     cmpl   $0x64,0x8(%ebp)
+(gdb) 
+(gdb) b *0x1001cc
+Breakpoint 1 at 0x1001cc: file countc.c, line 13.
+(gdb) i reg
+eax            0x1      1
+ecx            0x6ac54  437332
+edx            0x0      0
+ebx            0x9e00   40448
+esp            0x578a8  0x578a8
+ebp            0x578ac  0x578ac
+esi            0x90800  591872
+edi            0x51ffc  335868
+eip            0x100100 0x100100
+ps             0x202    514
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x1001cc in lb () at countc.c:13
+13      }
+(gdb) i reg
+eax            0x0      0
+ecx            0x61     97
+edx            0x3fffd4 4194260
+ebx            0x0      0
+esp            0x3fffc8 0x3fffc8
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x101010 1052688
+eip            0x1001cc 0x1001cc
+ps             0x246    582
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x1001cc in lb () at countc.c:13
+13      }
+(gdb) i reg
+eax            0x1      1
+ecx            0x61     97
+edx            0x3fffd5 4194261
+ebx            0x0      0
+esp            0x3fffc8 0x3fffc8
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x101010 1052688
+eip            0x1001cc 0x1001cc
+ps             0x246    582
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x1001cc in lb () at countc.c:13
+13      }
+(gdb) i reg
+eax            0x2      2
+ecx            0x61     97
+edx            0x3fffd8 4194264
+ebx            0x0      0
+esp            0x3fffc8 0x3fffc8
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x101010 1052688
+eip            0x1001cc 0x1001cc
+ps             0x246    582
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x1001cc in lb () at countc.c:13
+13      }
+(gdb) i reg
+eax            0x3      3
+ecx            0x61     97
+edx            0x3fffdb 4194267
+ebx            0x0      0
+esp            0x3fffc8 0x3fffc8
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x101010 1052688
+eip            0x1001cc 0x1001cc
+ps             0x246    582
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) i regc[K
+Continuing.
+The number of a's in the string is 4
+
+Program received signal SIGTRAP, Trace/breakpoint trap.
+startupc () at startup.c:4
+startup.c:4: No such file or directory.
+(gdb) q
+The program is running.  Quit anyway (and kill it)? (y or n) y
+blade57(2)% exit
+exit
+
+script done on Sun Oct  4 14:49:47 2015

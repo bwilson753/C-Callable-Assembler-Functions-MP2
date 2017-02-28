@@ -1,0 +1,48 @@
+        
+        .globl _count
+        .text
+_count:
+        #addl $4, %esp #move to first argument
+        #call _printf  #print the first argument
+        #subl $4, %esp #return the esp
+        #pushl $nl     #push newline onto stack
+        #call _printf  #print newline
+        #addl $4, %esp #retore stack
+        #addl $8, %esp #go to the second argument
+        #call _printf  #print the second argument, it interpets 'a' as
+                      #an address
+        #subl $12, %esp #restore the stack pointer
+        #pushl $nl     #push newline onto stack
+        #call _printf  #print newline
+        #addl $4, %esp #retore stack
+        movl $0, %eax #initialize the output to 0.
+        #addl $4, %esp #move to first argument
+        movl 4(%esp), %edx #move the string pointer to the edx
+        #addl $4, %esp  #move to the second argument
+        movl 8(%esp), %ecx  #move the char value into the ecx
+        #subl $8, %esp #restore the stack pointer
+        movl $0, %ebx #add null character to ebx
+        #jmp la
+la:                    #begining of main loop
+        cmpb %ebx, (%edx) #checks for null character
+        je ld      #goes to return
+        cmpb %ecx, (%edx)  #test to see if chars are equal
+        je lb            #jump to increment eax
+        jmp lc         #jump to increment string pointer
+lb:                    #this loop increment eax
+        addl $1, %eax
+        #jmp lc
+lc:                    #increments string pointer then tests for null
+        incl %edx
+        #cmpl %ebx, (%edx) #checks for null character
+        #je ld      #goes to return
+        jmp la      #there are still more characters
+ld:     
+        ret
+        .data
+nl:
+        .asciz "\n"
+        .end
+        
+
+       

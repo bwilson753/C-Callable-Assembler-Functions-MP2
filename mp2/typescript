@@ -1,0 +1,1183 @@
+Script started on Sun Oct 11 18:02:04 2015
+warning: could not update utmp entry
+blade57(1)% cat tiny.script
+Script started on Sun Sep 27 17:49:35 2015
+warning: could not update utmp entry
+blade57(1)% cat tiny.s
+        movl $8, %eax
+        addl $3, %eax
+        movl %eax, 0x200
+        int $3
+        .end
+        
+blade57(2)%  i386-as -o tiny.opc tiny.s
+blade57(3)%  i386-ld -N -Ttext 0x1000e0 -o tiny.lnx tiny.opc
+blade57(4)%  disas --full tiny.lnx 
+
+tiny.lnx:     file format a.out-i386-linux
+
+Contents of section .text:
+ 0000 b8080000 0083c003 a3000200 00cc9090  ................
+Contents of section .data:
+Disassembly of section .text:
+00000000 <tiny.opc-100100> movl   $0x8,%eax
+00000005 <tiny.opc-1000fb> addl   $0x3,%eax
+00000008 <tiny.opc-1000f8> movl   %eax,0x200
+0000000d <tiny.opc-1000f3> int3   
+0000000e <tiny.opc-1000f2> nop    
+0000000f <tiny.opc-1000f1> Address 0x10 is out of bounds.
+blade57(5)%  mtip -f tiny.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 1 
+~resetting board #1!
+Please type <CR> to confirm console setting: 
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading tiny.lnx
+.Done.
+
+Download done, setting EIP to 100100.
+Tutor>  d  md 100100
+00100100    b8 08 00 00 00 83 c0 03 a3 00 02 00 00 cc 90 90 ................
+Tutor> rd
+EAX=00000001 EBX=00009e00   EBP=000578ac
+EDX=00000000 ECX=0006ac54   ESP=000578a8
+ESI=00090800 EDI=00051ffc   EIP=00100100
+EFLAGS=0202 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> md 200
+00000200    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> ms 200 00000000
+Tutor> md 200
+00000200    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> rs eip 100100
+Tutor> t
+Exception 1 at EIP=00100105: Debugger interrupt
+Tutor> rd
+EAX=00000008 EBX=00009e00   EBP=000578ac
+EDX=00000000 ECX=0006ac54   ESP=000578a8
+ESI=00090800 EDI=00051ffc   EIP=00100105
+EFLAGS=0302 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> md d 200
+00000200    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> t
+Exception 1 at EIP=00100108: Debugger interrupt
+Tutor> rd
+EAX=0000000b EBX=00009e00   EBP=000578ac
+EDX=00000000 ECX=0006ac54   ESP=000578a8
+ESI=00090800 EDI=00051ffc   EIP=00100108
+EFLAGS=0302 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> md 200
+00000200    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> t
+Exception 1 at EIP=0010010d: Debugger interrupt
+Tutor> rd
+EAX=0000000b EBX=00009e00   EBP=000578ac
+EDX=00000000 ECX=0006ac54   ESP=000578a8
+ESI=00090800 EDI=00051ffc   EIP=0010010d
+EFLAGS=0302 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> md 200
+00000200    0b 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+Tutor> t
+Exception 3 at EIP=0010010e: Breakpoint
+Tutor> ~q 
+Quit handler: 
+killing process 10177 Leaving board #1
+blade57(6)% exit
+script done on Sun Sep 27 18:01:16 2015
+blade57(2)% cat sum10.script
+Script started on Sun Sep 27 21:02:52 2015
+warning: could not update utmp entry
+blade57(1)%  i386-gdb sum10.lnx
+GDB is free software and you are welcome to distribute copies of it
+ under certain conditions; type "show copying" to see the conditions.
+There is absolutely no warranty for GDB; type "show warranty" for details.
+GDB 4.15.1 (sparc-sun-sunos4.1.3 --target i386-linuxaout), 
+Copyright 1995 Free Software Foundation, Inc...
+(gdb)  tar rem /dev/remgdb5 6
+Remote debugging using /dev/remgdb6
+0x100100 in /groups/ulab/pcdev/lib/startup0.opc ()
+(gdb) b main
+Breakpoint 1 at 0x100148: file sum10c.c, line 5.
+(gdb) c
+Continuing.
+
+Breakpoint 1, main () at sum10c.c:5
+5         printf("sum of 10 ints is %d\n",sum10());
+(gdb) b sum10
+Breakpoint 2 at 0x100160
+(gdb) c
+Continuing.
+
+Breakpoint 2, 0x100160 in sum10.opc () at sum10c.c:6
+6       }
+(gdb) where
+#0  0x100160 in sum10.opc () at sum10c.c:6
+#1  0x100122 in startupc () at startup.c:7
+(gdb) p $pc
+$1 = (void *) 0x100160
+(gdb) p $sp
+$2 = (void *) 0x3fffdc
+(gdb) i reg
+eax            0x69804  432132
+ecx            0x0      0
+edx            0x0      0
+ebx            0x9e00   40448
+esp            0x3fffdc 0x3fffdc
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x100fb0 1052592
+eip            0x100160 0x100160
+ps             0x212    530
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) x/i 4 $pc
+0x100160 <sum10.opc>:   movl   $0x1,%ecx
+(gdb) x/10i $pc
+0x100160 <sum10.opc>:   movl   $0x1,%ecx
+0x100165 <sum10.opc+5>: movl   $0x0,%eax
+0x10016a <addint>:      addl   %ecx,%eax
+0x10016c <addint+2>:    incl   %ecx
+0x10016d <addint+3>:    cmpl   $0xa,%ecx
+0x100170 <addint+6>:    jbe    0x10016a <addint>
+0x100172 <addint+8>:    ret    
+0x100173 <addint+9>:    nop    
+0x100174 <support.opc>: int3   
+0x100175 <support.opc+1>:       ret    
+(gdb) x/10i $pci $pc[Ki reg[Kp $sp[Kpc[Kwhere[Kc[Kb sum10c[Kb main tar rem /dev/remgdb6(gdb) b main[Kc[Kb sum10c[Kwherep $pc[Kwhere[Kc[K si
+0x100165        6       }
+(gdb) x/i $pc
+0x100165 <sum10.opc+5>: movl   $0x0,%eax
+(gdb) i reg
+eax            0x69804  432132
+ecx            0x1      1
+edx            0x0      0
+ebx            0x9e00   40448
+esp            0x3fffdc 0x3fffdc
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x100fb0 1052592
+eip            0x100165 0x100165
+ps             0x312    786
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+sum of 10 ints is 55
+
+Program received signal SIGTRAP, Trace/breakpoint trap.
+startupc () at startup.c:4
+startup.c:4: No such file or directory.
+(gdb) srt  et $eip = 0x100100
+(gdb) c
+Continuing.
+
+Breakpoint 1, main () at sum10c.c:5
+5         printf("sum of 10 ints is %d\n",sum10());
+(gdb) c
+Continuing.
+
+Breakpoint 2, 0x100160 in sum10.opc () at sum10c.c:6
+6       }
+(gdb) c
+Continuing.
+sum of 10 ints is 55
+
+Program received signal SIGTRAP, Trace/breakpoint trap.
+startupc () at startup.c:4
+startup.c:4: No such file or directory.
+(gdb) quit
+The program is running.  Quit anyway (and kill it)? (y or n) y
+blade57(2)% exit
+script done on Sun Sep 27 21:16:15 2015
+blade57(3)% cat count.s
+        
+        .globl _count
+        .text
+_count:
+        #addl $4, %esp #move to first argument
+        #call _printf  #print the first argument
+        #subl $4, %esp #return the esp
+        #pushl $nl     #push newline onto stack
+        #call _printf  #print newline
+        #addl $4, %esp #retore stack
+        #addl $8, %esp #go to the second argument
+        #call _printf  #print the second argument, it interpets 'a' as
+                      #an address
+        #subl $12, %esp #restore the stack pointer
+        #pushl $nl     #push newline onto stack
+        #call _printf  #print newline
+        #addl $4, %esp #retore stack
+        movl $0, %eax #initialize the output to 0.
+        #addl $4, %esp #move to first argument
+        movl 4(%esp), %edx #move the string pointer to the edx
+        #addl $4, %esp  #move to the second argument
+        movl 8(%esp), %ecx  #move the char value into the ecx
+        #subl $8, %esp #restore the stack pointer
+        movl $0, %ebx #add null character to ebx
+        #jmp la
+la:                    #begining of main loop
+        cmpb %ebx, (%edx) #checks for null character
+        je ld      #goes to return
+        cmpb %ecx, (%edx)  #test to see if chars are equal
+        je lb            #jump to increment eax
+        jmp lc         #jump to increment string pointer
+lb:                    #this loop increment eax
+        addl $1, %eax
+        #jmp lc
+lc:                    #increments string pointer then tests for null
+        incl %edx
+        #cmpl %ebx, (%edx) #checks for null character
+        #je ld      #goes to return
+        jmp la      #there are still more characters
+ld:     
+        ret
+        .data
+nl:
+        .asciz "\n"
+        .end
+        
+
+       
+blade57(4)% cat countc.c
+/* countc.c: call assembly soubroutine to count c's in string 
+   bob wilson
+   02/15/03
+   */
+
+extern int count(char *string, char c);
+
+int main(void)
+{
+  char string [] = "aabcabcabc";
+  printf("The number of a's in the string is %d\n", count(string, 'a'));
+  return 0;
+}
+blade57(5)% cat count.script
+Script started on Sun Oct  4 14:42:11 2015
+warning: could not update utmp entry
+blade57(1)% i386-gdb count.lnx
+GDB is free software and you are welcome to distribute copies of it
+ under certain conditions; type "show copying" to see the conditions.
+There is absolutely no warranty for GDB; type "show warranty" for details.
+GDB 4.15.1 (sparc-sun-sunos4.1.3 --target i386-linuxaout), 
+Copyright 1995 Free Software Foundation, Inc...
+(gdb) tar rem /devf /remgdb6
+Remote debugging using /dev/remgdb6
+0x100100 in /groups/ulab/pcdev/lib/startup0.opc ()
+(gdb) i reg
+eax            0x1      1
+ecx            0x6ac54  437332
+edx            0x0      0
+ebx            0x9e00   40448
+esp            0x578a8  0x578a8
+ebp            0x578ac  0x578ac
+esi            0x90800  591872
+edi            0x51ffc  335868
+eip            0x100100 0x100100
+ps             0x202    514
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) set $eip = 0x100100
+(gdb) x/100i O 0x100100
+0x100100 </groups/ulab/pcdev/lib/startup0.opc>: movl   $0x3ffff0,%esp
+0x100105 </groups/ulab/pcdev/lib/startup0.opc+5>:       movl   $0x0,%ebp
+0x10010a </groups/ulab/pcdev/lib/startup0.opc+10>:      
+    call   0x100110 <startupc>
+0x10010f </groups/ulab/pcdev/lib/startup0.opc+15>:      int3   
+0x100110 <startupc>:    pushl  %ebp
+0x100111 <startupc+1>:  movl   %esp,%ebp
+0x100113 <startupc+3>:  call   0x1001d6 <clr_bss>
+0x100118 <startupc+8>:  call   0x1001e8 <init_devio>
+0x10011d <startupc+13>: call   0x10015c <main>
+0x100122 <startupc+18>: leave  
+0x100123 <startupc+19>: ret    
+0x100124 <startupc+20>: addb   %al,(%eax)
+0x100126 <startupc+22>: addb   %al,(%eax)
+0x100128 <countc.opc>:  popa   
+0x100129 <countc.opc+1>:        popa   
+0x10012a <countc.opc+2>:        boundl 0x61(%ebx),%esp
+0x10012d <countc.opc+5>:        boundl 0x61(%ebx),%esp
+0x100130 <countc.opc+8>:        boundl 0x0(%ebx),%esp
+0x100133 <countc.opc+11>:       pushl  %esp
+0x100134 <countc.opc+12>:       pushl  $0x756e2065
+0x100139 <countc.opc+17>:       insl   (%dx),%es:(%edi)
+0x10013a <countc.opc+18>:       boundl 0x72(%ebp),%esp
+0x10013d <countc.opc+21>:       andb   %ch,0x66(%edi)
+0x100140 <countc.opc+24>:       andb   %ah,0x27(%ecx)
+0x100143 <countc.opc+27>:       jae    0x100165 <main+9>
+0x100145 <countc.opc+29>:       imull  $0x20656874,0x20(%esi),%ebp
+0x10014c <countc.opc+36>:       jae    0x1001c2 <la>
+0x10014e <countc.opc+38>:       jb     0x1001b9 <count.opc+9>
+0x100150 <countc.opc+40>:       outsb  %ds:(%esi),(%dx)
+0x100151 <countc.opc+41>:       addr16 andb %ch,0x73(%ecx)
+0x100155 <countc.opc+45>:       andb   %ah,0x90000a64
+0x10015b <countc.opc+51>:       nop    
+0x10015c <main>:        pushl  %ebp
+---Type <return> to continue, or q <return> to quit---
+0x10015d <main+1>:      movl   %esp,%ebp
+0x10015f <main+3>:      subl   $0xc,%esp
+0x100162 <main+6>:      call   0x100780 <__main>
+0x100167 <main+11>:     leal   0xfffffff4(%ebp),%edx
+0x10016a <main+14>:     movl   $0x100128,%eax
+0x10016f <main+19>:     movl   (%eax),%edx
+0x100171 <main+21>:     movl   %edx,0xfffffff4(%ebp)
+0x100174 <main+24>:     movl   0x4(%eax),%edx
+0x100177 <main+27>:     movl   %edx,0xfffffff8(%ebp)
+0x10017a <main+30>:     movw   0x8(%eax),%dx
+0x10017e <main+34>:     movw   %dx,0xfffffffc(%ebp)
+0x100182 <main+38>:     movb   0xa(%eax),%al
+0x100185 <main+41>:     movb   %al,0xfffffffe(%ebp)
+0x100188 <main+44>:     pushl  $0x61
+0x10018a <main+46>:     leal   0xfffffff4(%ebp),%eax
+0x10018d <main+49>:     pushl  %eax
+0x10018e <main+50>:     call   0x1001b0 <count>
+0x100193 <main+55>:     addl   $0x8,%esp
+0x100196 <main+58>:     movl   %eax,%eax
+0x100198 <main+60>:     pushl  %eax
+0x100199 <main+61>:     pushl  $0x100133
+0x10019e <main+66>:     call   0x100788 <printf>
+0x1001a3 <main+71>:     addl   $0x8,%esp
+0x1001a6 <main+74>:     xorl   %eax,%eax
+0x1001a8 <main+76>:     jmp    0x1001ac <main+80>
+0x1001aa <main+78>:     nop    
+0x1001ab <main+79>:     nop    
+0x1001ac <main+80>:     leave  
+0x1001ad <main+81>:     ret    
+0x1001ae <main+82>:     nop    
+0x1001af <main+83>:     nop    
+0x1001b0 <count>:       movl   $0x0,%eax
+0x1001b5 <count.opc+5>: movl   0x4(%esp,1),%edx
+0x1001b9 <count.opc+9>: movl   0x8(%esp,1),%ecx
+---Type <return> to continue, or q <return> to quit---
+0x1001bd <count.opc+13>:        movl   $0x0,%ebx
+0x1001c2 <la>:  cmpb   %bl,(%edx)
+0x1001c4 <la+2>:        je     0x1001d2 <ld>
+0x1001c6 <la+4>:        cmpb   %cl,(%edx)
+0x1001c8 <la+6>:        je     0x1001cc <lb>
+0x1001ca <la+8>:        jmp    0x1001cf <lc>
+0x1001cc <lb>:  addl   $0x1,%eax
+0x1001cf <lc>:  incl   %edx
+0x1001d0 <lc+1>:        jmp    0x1001c2 <la>
+0x1001d2 <ld>:  ret    
+0x1001d3 <ld+1>:        nop    
+0x1001d4 <support.opc>: int3   
+0x1001d5 <support.opc+1>:       ret    
+0x1001d6 <clr_bss>:     xorl   %eax,%eax
+0x1001d8 <clr_bss+2>:   movl   $0x101008,%edi
+0x1001dd <clr_bss+7>:   movl   $0x101010,%ecx
+0x1001e2 <clr_bss+12>:  subl   %edi,%ecx
+0x1001e4 <clr_bss+14>:  cld    
+0x1001e5 <clr_bss+15>:  repz stosb %al,%es:(%edi)
+0x1001e7 <clr_bss+17>:  ret    
+0x1001e8 <init_devio>:  pushl  %ebp
+0x1001e9 <init_devio+1>:        movl   %esp,%ebp
+0x1001eb <init_devio+3>:        movl   0x55104,%eax
+0x1001f0 <init_devio+8>:        movl   %eax,0x101004
+0x1001f5 <init_devio+13>:       leave  
+0x1001f6 <init_devio+14>:       ret    
+0x1001f7 <init_devio+15>:       nop    
+0x1001f8 <init>:        pushl  %ebp
+0x1001f9 <init+1>:      movl   %esp,%ebp
+0x1001fb <init+3>:      pushl  %ebx
+0x1001fc <init+4>:      cmpl   $0x0,0x8(%ebp)
+0x100200 <init+8>:      jl     0x100230 <init+56>
+0x100202 <init+10>:     cmpl   $0x64,0x8(%ebp)
+(gdb) 
+(gdb) b *0x1001cc
+Breakpoint 1 at 0x1001cc: file countc.c, line 13.
+(gdb) i reg
+eax            0x1      1
+ecx            0x6ac54  437332
+edx            0x0      0
+ebx            0x9e00   40448
+esp            0x578a8  0x578a8
+ebp            0x578ac  0x578ac
+esi            0x90800  591872
+edi            0x51ffc  335868
+eip            0x100100 0x100100
+ps             0x202    514
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x1001cc in lb () at countc.c:13
+13      }
+(gdb) i reg
+eax            0x0      0
+ecx            0x61     97
+edx            0x3fffd4 4194260
+ebx            0x0      0
+esp            0x3fffc8 0x3fffc8
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x101010 1052688
+eip            0x1001cc 0x1001cc
+ps             0x246    582
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x1001cc in lb () at countc.c:13
+13      }
+(gdb) i reg
+eax            0x1      1
+ecx            0x61     97
+edx            0x3fffd5 4194261
+ebx            0x0      0
+esp            0x3fffc8 0x3fffc8
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x101010 1052688
+eip            0x1001cc 0x1001cc
+ps             0x246    582
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x1001cc in lb () at countc.c:13
+13      }
+(gdb) i reg
+eax            0x2      2
+ecx            0x61     97
+edx            0x3fffd8 4194264
+ebx            0x0      0
+esp            0x3fffc8 0x3fffc8
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x101010 1052688
+eip            0x1001cc 0x1001cc
+ps             0x246    582
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x1001cc in lb () at countc.c:13
+13      }
+(gdb) i reg
+eax            0x3      3
+ecx            0x61     97
+edx            0x3fffdb 4194267
+ebx            0x0      0
+esp            0x3fffc8 0x3fffc8
+ebp            0x3fffe0 0x3fffe0
+esi            0x90800  591872
+edi            0x101010 1052688
+eip            0x1001cc 0x1001cc
+ps             0x246    582
+cs             0x10     16
+ss             0x18     24
+ds             0x18     24
+es             0x18     24
+fs             0x18     24
+gs             0x18     24
+(gdb) i regc[K
+Continuing.
+The number of a's in the string is 4
+
+Program received signal SIGTRAP, Trace/breakpoint trap.
+startupc () at startup.c:4
+startup.c:4: No such file or directory.
+(gdb) q
+The program is running.  Quit anyway (and kill it)? (y or n) y
+blade57(2)% exit
+exit
+
+script done on Sun Oct  4 14:49:47 2015
+blade57(6)% cat printbin.s
+        .globl _printbin
+        .text
+
+_printbin:       
+        #movl $array, %eax #return the string
+         #pushl 4(%esp)
+        #call _printf
+        #addl $4, %esp
+
+        #0x20 = space
+        #0x30 = 0
+        #0x31 = 1
+#create an "and" comparison that compares to 1111 0000, then
+#put the first char into donibble then "and"  to 0000 1111
+#and put the second char into do nibble
+        #movl $array, %ebx #this places array pointer into ebx
+        movl $0xf0, %ecx #this puts 1111 0000 into ecx
+        movl 4(%esp), %edx #put char values into edx
+        #movl %esp, %ebp #find the arguments
+        andl %edx, %ecx #put first char value into ecx
+        sarl $4, %ecx shift the bits to the right (becomes first 4 bits)
+        movl $0, %eax #initialize eax to zero
+        movl $array, %edx
+        #need ecx, CAN use eax, CAN use edx but must be reitialized
+        jmp donibble
+back1:  #gets back to main code
+        movl $array, %eax
+        addb $9, %eax move to the last address of array (space)
+        cmpl %edx, %eax #if this is true it has reached the end
+        je back2  #go to return
+        movb $0x20, (%edx)#add a space
+        movl 4(%esp), %edx#put the chars back in edx
+        movl $0x0f, %ecx #puts 0000 1111
+        andl %edx, %ecx #puts 2nd char value into ecx
+        movl $0, %eax #initialize eax to zero
+        movl $array, %edx
+        addb $5, %edx
+        jmp donibble
+
+back2:  
+        movl $array, %eax#puts the final array value into eax  
+        ret
+        #will have to decrement back at the end.
+donibble:
+        #0x8 = 1000
+        #0x4 = 0100
+        #0x2 = 0010
+        #0x1 = 0001
+
+#move the appropriate hex value then "and" it with ecx
+        movl $0x8, %eax # eax has value > 1 if there is an 3rd bit
+        andl %ecx, %eax # it will hsve 0 otherwise
+        cmpb $0, %eax
+        je na #jump to add zero if equal
+
+a:     #this adds a 1 to char string then increments address (incb)
+        movb $0x31, (%edx)
+        incb %edx
+        jmp b #TEST back1 should be b
+        
+na:    #this adds a zero to char string then increments it
+        movb $0x30, (%edx)
+        incb %edx
+
+b:     #tests second bit
+        movl $0x4, %eax # eax has value > 1 if there is an 3rd bit
+        andl %ecx, %eax # it will hsve 0 otherwise
+        cmpb $0, %eax
+        je nba #jump to add zero if equal
+
+ba:     #this adds a 1 to char string then increments address (incb)
+        movb $0x31, (%edx)
+        incb %edx
+        jmp c
+
+nba:    #this adds a zero to char string then increments it
+        movb $0x30, (%edx)
+        incb %edx
+
+c:       #tests 3rd bit
+         movl $0x2, %eax # eax has value > 1 if there is a 2nd bit
+         andl %ecx, %eax # it will hsve 0 otherwise
+         cmpb $0, %eax
+         je nca #jump to add zero if equal
+
+ca:      #this adds a 1 to char string then increments address (incb)
+         movb $0x31, (%edx)
+         incb %edx
+         jmp d
+
+nca:     #this adds a zero to char string then increments it
+         movb $0x30, (%edx)
+         incb %edx
+
+d:       #tests 4th bit
+         movl $0x1, %eax # eax has value > 1 if there is a 2nd bit
+         andl %ecx, %eax # it will hsve 0 otherwise
+         cmpb $0, %eax
+         je nda #jump to add zero if equal
+
+da:      #this adds a 1 to char string then increments address (incb)
+         movb $0x31, (%edx)
+         incb %edx
+         jmp back1
+
+nda:     #this adds a zero to char string then increments it
+         movb $0x30, (%edx)
+         incb %edx
+         jmp back1
+        
+#this code takes in a single char value and uses bitmasking to uncover
+#each bit, one at a time, and its to a char array. 
+        
+
+
+        
+
+        
+        .data
+#need to create a char array to hold a string of length 9.
+#four bits, a space, and then four more bits.
+array:  .asciz "923496789 " #this is 9 spaces long, plus one
+                            #space for extra increment
+        .end
+blade57(7)% cat printbinc.c
+/* printbinc.c: driver for printbin.s 
+   bob wilson 01/20/2012 
+   */
+
+extern char *printbin(unsigned char);
+
+int main(char **args)
+{
+  unsigned int x;
+
+  printf("number to print in binary: \n");
+  scanf("%x",&x);
+  printf("The binary format for %x is %s\n", 
+                                 x,   printbin((unsigned char)x));
+  return 0;
+}
+
+blade57(8)% cat printbin.script
+Script started on Thu Oct  8 14:38:39 2015
+warning: could not update utmp entry
+blade57(1)% cat printbin1.script
+Script started on Thu Oct  8 14:14:48 2015
+warning: could not update utmp entry
+blade57(1)% make clean
+rm -f *.o *.opc *.syms *.lnx core syms
+blade57(2)% make A=printbin
+/groups/ulab/bin/i386-as -o printbin.opc printbin.s
+/groups/ulab/bin/i386-gcc -g -Wall -Wno-implicit -Wshadow -I/groups/ulab/pcdev/include -c -o printbinc.opc printbinc.c
+/groups/ulab/bin/i386-ld -N -Ttext 1000e0 -o printbin.lnx \
+        /groups/ulab/pcdev/lib/startup0.opc /groups/ulab/pcdev/lib/startup.opc \
+        printbinc.opc printbin.opc /groups/ulab/pcdev/lib/libc.a
+rm -f syms;/groups/ulab/bin/i386-nm -n printbin.lnx>printbin.syms;ln -s printbin.syms syms
+blade57(3)% mtip -b 8 -f printbin.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 8 
+~resetting board #8!
+Please type <CR> to confirm console setting: 
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading printbin.lnx
+.......Done.
+
+Download done, setting EIP to 100100.
+Tutor> go 100100
+number to print in binary: 
+ab
+The binary format for ab is 1010 1011 
+Exception 3 at EIP=00100110: Breakpoint
+Tutor> exit
+No such command: exit, use h command for help
+Tutor> ~q 
+Quit handler: 
+killing process 17633 Leaving board #8
+blade57(4)% exit
+script done on Thu Oct  8 14:17:36 2015
+blade57(2)% cat printbin2.script
+Script started on Thu Oct  8 14:33:11 2015
+warning: could not update utmp entry
+blade57(1)% i386-gdb printbin.lnx
+GDB is free software and you are welcome to distribute copies of it
+ under certain conditions; type "show copying" to see the conditions.
+There is absolutely no warranty for GDB; type "show warranty" for details.
+GDB 4.15.1 (sparc-sun-sunos4.1.3 --target i386-linuxaout), 
+Copyright 1995 Free Software Foundation, Inc...
+(gdb) tar rem /dev/remgdb5 8
+Remote debugging using /dev/remgdb8
+0x100100 in /groups/ulab/pcdev/lib/startup0.opc ()
+(gdb) x/100i ) 0x100100
+0x100100 </groups/ulab/pcdev/lib/startup0.opc>: movl   $0x3ffff0,%esp
+0x100105 </groups/ulab/pcdev/lib/startup0.opc+5>:       movl   $0x0,%ebp
+0x10010a </groups/ulab/pcdev/lib/startup0.opc+10>:      
+    call   0x100110 <startupc>
+0x10010f </groups/ulab/pcdev/lib/startup0.opc+15>:      int3   
+0x100110 <startupc>:    pushl  %ebp
+0x100111 <startupc+1>:  movl   %esp,%ebp
+0x100113 <startupc+3>:  call   0x100266 <clr_bss>
+0x100118 <startupc+8>:  call   0x100278 <init_devio>
+0x10011d <startupc+13>: call   0x100164 <main>
+0x100122 <startupc+18>: leave  
+0x100123 <startupc+19>: ret    
+0x100124 <printbinc.opc>:       outsb  %ds:(%esi),(%dx)
+0x100125 <printbinc.opc+1>:     jne    0x100194 <main+48>
+0x100127 <printbinc.opc+3>:     boundl 0x72(%ebp),%esp
+0x10012a <printbinc.opc+6>:     andb   %dh,0x20(%edi,%ebp,2)
+0x10012e <printbinc.opc+10>:    jo     0x1001a2 <main+62>
+0x100130 <printbinc.opc+12>:    imull  $0x206e6920,0x74(%esi),%ebp
+0x100137 <printbinc.opc+19>:    boundl 0x6e(%ecx),%ebp
+0x10013a <printbinc.opc+22>:    popa   
+0x10013b <printbinc.opc+23>:    jb     0x1001b6 <main+82>
+0x10013d <printbinc.opc+25>:    cmpb   (%eax),%ah
+0x10013f <printbinc.opc+27>:    orb    (%eax),%al
+0x100141 <printbinc.opc+29>:    andl   $0x68540078,%eax
+0x100146 <printbinc.opc+34>:    andb   %ah,%gs:0x69(%edx)
+0x10014a <printbinc.opc+38>:    outsb  %ds:(%esi),(%dx)
+0x10014b <printbinc.opc+39>:    popa   
+0x10014c <printbinc.opc+40>:    jb     0x1001c7 <printbin.opc+15>
+0x10014e <printbinc.opc+42>:    andb   %ah,0x6f(%esi)
+0x100151 <printbinc.opc+45>:    jb     0x1001c0 <printbin.opc+8>
+0x100153 <printbinc.opc+47>:    popa   
+0x100154 <printbinc.opc+48>:    je     0x100176 <main+18>
+0x100156 <printbinc.opc+50>:    outsw  %ds:(%esi),(%dx)
+0x100158 <printbinc.opc+52>:    jb     0x10017a <main+22>
+0x10015a <printbinc.opc+54>:    andl   $0x73692078,%eax
+0x10015f <printbinc.opc+59>:    andb   %ah,0x55000a73
+0x100165 <main+1>:      movl   %esp,%ebp
+0x100167 <main+3>:      subl   $0x4,%esp
+0x10016a <main+6>:      call   0x100810 <__main>
+0x10016f <main+11>:     pushl  $0x100124
+0x100174 <main+16>:     call   0x100818 <printf>
+0x100179 <main+21>:     addl   $0x4,%esp
+0x10017c <main+24>:     leal   0xfffffffc(%ebp),%eax
+0x10017f <main+27>:     pushl  %eax
+0x100180 <main+28>:     pushl  $0x100141
+0x100185 <main+33>:     call   0x100840 <scanf>
+0x10018a <main+38>:     addl   $0x8,%esp
+0x10018d <main+41>:     movzbl 0xfffffffc(%ebp),%eax
+0x100191 <main+45>:     pushl  %eax
+---Type <return> to continue, or q <return> to quit---
+0x100192 <main+46>:     call   0x1001b8 <printbin.opc>
+0x100197 <main+51>:     addl   $0x4,%esp
+0x10019a <main+54>:     movl   %eax,%eax
+0x10019c <main+56>:     pushl  %eax
+0x10019d <main+57>:     movl   0xfffffffc(%ebp),%eax
+0x1001a0 <main+60>:     pushl  %eax
+0x1001a1 <main+61>:     pushl  $0x100144
+0x1001a6 <main+66>:     call   0x100818 <printf>
+0x1001ab <main+71>:     addl   $0xc,%esp
+0x1001ae <main+74>:     xorl   %eax,%eax
+0x1001b0 <main+76>:     jmp    0x1001b4 <main+80>
+0x1001b2 <main+78>:     nop    
+0x1001b3 <main+79>:     nop    
+0x1001b4 <main+80>:     leave  
+0x1001b5 <main+81>:     ret    
+0x1001b6 <main+82>:     nop    
+0x1001b7 <main+83>:     nop    
+0x1001b8 <printbin.opc>:        movl   $0xf0,%ecx
+0x1001bd <printbin.opc+5>:      movl   0x4(%esp,1),%edx
+0x1001c1 <printbin.opc+9>:      andl   %edx,%ecx
+0x1001c3 <printbin.opc+11>:     sarl   $0x4,%ecx
+0x1001c6 <printbin.opc+14>:     movl   $0x0,%eax
+0x1001cb <printbin.opc+19>:     movl   $0x101930,%edx
+0x1001d0 <printbin.opc+24>:     jmp    0x100201 <donibble>
+0x1001d2 <back1>:       movl   $0x101930,%eax
+0x1001d7 <back1+5>:     addl   $0x9,%eax
+0x1001da <back1+8>:     cmpl   %edx,%eax
+0x1001dc <back1+10>:    je     0x1001fb <back2>
+0x1001de <back1+12>:    movb   $0x20,(%edx)
+0x1001e1 <back1+15>:    movl   0x4(%esp,1),%edx
+0x1001e5 <back1+19>:    movl   $0xf,%ecx
+0x1001ea <back1+24>:    andl   %edx,%ecx
+0x1001ec <back1+26>:    movl   $0x0,%eax
+0x1001f1 <back1+31>:    movl   $0x101930,%edx
+0x1001f6 <back1+36>:    addl   $0x5,%edx
+0x1001f9 <back1+39>:    jmp    0x100201 <donibble>
+0x1001fb <back2>:       movl   $0x101930,%eax
+0x100200 <back2+5>:     ret    
+0x100201 <donibble>:    movl   $0x8,%eax
+0x100206 <donibble+5>:  andl   %ecx,%eax
+0x100208 <donibble+7>:  cmpl   $0x0,%eax
+0x10020b <donibble+10>: je     0x100213 <na>
+0x10020d <a>:   movb   $0x31,(%edx)
+0x100210 <a+3>: incl   %edx
+0x100211 <a+4>: jmp    0x100217 <b>
+0x100213 <na>:  movb   $0x30,(%edx)
+0x100216 <na+3>:        incl   %edx
+0x100217 <b>:   movl   $0x4,%eax
+0x10021c <b+5>: andl   %ecx,%eax
+---Type <return> to continue, or q <return> to quit---
+0x10021e <b+7>: cmpl   $0x0,%eax
+0x100221 <b+10>:        je     0x100229 <nba>
+0x100223 <ba>:  movb   $0x31,(%edx)
+(gdb) q
+The program is running.  Quit anyway (and kill it)? (y or n) y
+blade57(2)% exit
+script done on Thu Oct  8 14:35:15 2015
+blade57(3)% cat printbin2.script[8D1[7C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kmtip -b 8 -f printbin.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 8 
+~resetting board #8!
+Please type <CR> to confirm console setting: 
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading printbin.lnx
+.......Done.
+
+Download done, setting EIP to 100100.
+Tutor> b 100201
+Tutor> go 100100
+number to print in binary: 
+ab
+Exception 3 at EIP=00100201: Breakpoint
+Tutor> rd
+EAX=00000000 EBX=00009e00   EBP=003fffe0
+EDX=00101930 ECX=0000000a   ESP=003fffd4
+ESI=00090800 EDI=00101ad4   EIP=00100201
+EFLAGS=0216 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> go
+Exception 3 at EIP=00100201: Breakpoint
+Tutor> rd
+EAX=00000000 EBX=00009e00   EBP=003fffe0
+EDX=00101935 ECX=0000000b   ESP=003fffd4
+ESI=00090800 EDI=00101ad4   EIP=00100201
+EFLAGS=0206 (IF=1 SF=0 ZF=0 CF=0 OF=0)
+Tutor> go
+The binary format for ab is 1010 1011 
+Exception 3 at EIP=00100110: Breakpoint
+Tutor> ~q 
+Quit handler: 
+killing process 17943 Leaving board #8
+blade57(4)% exit
+script done on Thu Oct  8 14:42:21 2015
+blade57(9)% cat echo.s
+        .globl _echo
+        .text
+
+## = Best code so far
+        
+_echo:
+
+loop1:   
+        movw 4(%esp), %dx  #move the comport into the dx
+        #movl 8(%esp), %ecx #move escape value into ecx
+        addw $5, %dx  #line status
+        inb  (%dx), %al  #get bit values
+        andb $0x01, %al  #check to see if dr is 1
+        jnz loop2        #jnz? #go to send if there is data
+       
+        jmp loop1        #otherwise wait for data
+        
+
+loop2:
+        movl 8(%esp), %ecx #move escape value into ecx
+        movw 4(%esp), %dx  #move the comport into the dx
+        #cmpb %ecx, (%edx)
+        #je loop3
+        inb (%dx), %ax
+        cmpb %ecx, %eax
+        je loop3
+        outb %al, (%dx)
+        jmp loop1
+
+loop3:  
+        ret
+
+        .data
+
+        .end
+
+##loop1:  
+        #turn on dtr and rts
+##        movw 4(%esp), %dx  #move the comport into the dx 
+##      movl 8(%esp), %ecx #move escape value into edx
+##        movl 0x61, %eax #initialize eax
+##        inb (%dx), %al  #TEST
+#        outb %al, (%dx) #TEST
+#        inb (%dx), %al  #TEST
+#        outb %al, (%dx) #TEST
+#        movw $0x2fc, %dx #modem control
+#        inb  (%dx), %al #get current bit values
+#        orb  $0x03, %al # 2 lsbs are now 1
+#        outb %al, (%dx)  #rts and dts are set to 1
+
+        #wait for dsr, cts, and dcd
+#        movw $0x2fe, %dx  #modem status
+#loop1:
+#        inb  (%dx), %al  #get current bit values
+#        andb $0xb0, %al  #isolate dcd, dsr, and cts
+#        xorb $0xb0, %al  #make sure they are all 1
+#        jnz  loop1       #if not then try again
+
+#loop2:  
+        #if data is ready, jump to send, otherwise stay in loop
+##        addw $5, %dx  #line status
+##        inb  (%dx), %al  #get bit values
+##        andb $0x01, %al  #check to see if dr is 1
+#        ret    #TEST
+##        jz loop3        #jnz? #go to send if there is data
+#        ret    #TEST
+##        jmp loop2        #otherwise wait for data
+#        ret     #TEST
+
+##loop3:
+        #receive and test the data for escape
+##        movw 4(%esp), %dx  #i/o data address
+##        inb (%dx), %al   #move rx to al
+##        outb %al, (%dx)  #TEST
+##        jmp loop2
+#loop4:  #TEST
+#        inb  (%dx), %al  #get thre
+#        andb $0x20, %al  #if it is a 1, you can load it
+#        jnz  loop4  #jz? #if it is not 1 then you've got to wait
+#        jmp loop2
+##        cmpb %eax, %ecx  #see if it is the escape character
+##        je out          #if it is then quit
+##        pushl %ebx    #put the ebx on the stack so you can use it
+##        movb %al, %bl  #put rx into ebx
+
+#loop4:  
+        #send the data back out
+#        movw $0x2fd, %dx #line status
+        #thre is 0 when it is full, 1 is empty
+#        inb  (%dx), %al  #get thre
+#        andb $0x20, %al  #if it is a 1, you can load it
+#        jz  loop4   #if it is not 1 then you've got to wait
+##        movb %bl, %al  #get the data to send
+##        movl 4(%esp), %ebx #restore the ebx
+##        addl $4, %esp #restore the stack
+##        movw $0x2f8, (%dx)  #send it
+##        jmp  loop2  #go look for more data
+##out:    
+##        ret
+##        .data
+
+##        .end
+blade57(10)% cat echoc.c
+/* echo.c: use assembly language i/o to echo console input */
+/* build with makefile in $pcex:  make A=echo      */
+
+#include <stdio.h>
+#include <serial.h>
+
+extern void echo(int conport, unsigned char esc_char);
+void main()
+{
+  int console = sys_get_console_dev(); /* find out current sys console */
+  int conport;
+  char escape;
+
+  switch (console) {
+  case COM1: conport = COM1_BASE;
+    break;
+  case COM2: conport = COM2_BASE;
+    break;
+  default: printf("Expected serial port for console, exiting\n");
+    return;
+  }
+
+  printf("Type escape character and enter\n");
+  if (scanf("%c\n", &escape) != 1)
+    escape = 0x01;
+  echo(conport, escape);
+  return;
+}
+blade57(11)% cat echo.script
+Script started on Sun Oct 11 13:49:44 2015
+warning: could not update utmp entry
+blade57(1)% make A=echo
+make: `echo.lnx' is up to date.
+blade57(2)% mtip -f echo.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 1 
+~resetting board #1!
+
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading echo.lnx
+.......Done.
+
+Download done, setting EIP to 100100.
+Tutor> go 100100
+Type escape character and enter
+q
+abcException 3 at EIP=00100110: Breakpoint
+Tutor> go 100100
+Type escape character and enter
+q
+abcdexyException 3 at EIP=00100110: Breakpoint
+Tutor> go 100100
+Type escape character and enter
+q
+abcde
+xyException 3 at EIP=00100110: Breakpoint
+Tutor> ~q 
+Quit handler: 
+killing process 29872 Leaving board #1
+blade57(3)% exit
+script done on Sun Oct 11 13:53:10 2015
+blade57(12)% cat pollcount.s
+        .globl _pollcount_putc
+        .text
+
+_pollcount_putc:
+
+        movl $0x0, %ecx  #for the count
+loop:
+        incl %ecx  #incremnt the number of times checked
+        movl $0x2f8, %dx  #com2 address
+        addw $5, %dx   #line status
+        inb (%dx), %al  #get the thre
+        andb $0x20, %al #look at the thre
+        jz  loop #stay in loop if holding register full
+        movl $0x2f8, %dx  #com2 address
+        movl 4(%esp), %eax
+        outb %al, (%dx)  #send out the char
+        movl %ecx, %eax
+        ret
+
+        .data
+
+
+        .end
+blade57(13)% cat pollcountc.c
+/* echo.c: use assembly language i/o to echo console input */
+/* build with makefile in $pcex:  make A=echo      */
+
+#include <stdio.h>
+
+extern int pollcount_putc(unsigned char);
+void main()
+{
+  unsigned int i, count[5];
+  unsigned char c[] = "ABCDE";
+
+  for (i = 0; i < 300000; i++)
+     ;
+
+  for (i = 0; i < 5; i++)
+     count[i] = pollcount_putc(c[i]);
+
+  printf("\n");
+  for (i = 0; i < 5; i++)
+     printf("Count %d is %7d\n", i, count[i]);
+
+}
+
+blade57(14)% cat pollcount.script
+Script started on Sun Oct 11 17:52:58 2015
+warning: could not update utmp entry
+blade57(1)% mal[K[K[Kls
+Rubric.docx       echoc.c           pollcount.syms    printbin2.script
+count.s           echoc.opc         pollcount.s~      printbinc.c
+count.script      makefile          pollcountc.c      printbinc.opc
+count.s~          mp2.doc           pollcountc.opc    soln
+countc.c          mp2.pdf           printbin.lnx      sum10.s
+echo.lnx          mp2warmup.doc     printbin.opc      sum10.script
+echo.opc          mp2warmup.pdf     printbin.s        sum10c.c
+echo.s            pollcount.lnx     printbin.script   sum10orig.script
+echo.script       pollcount.opc     printbin.syms     syms
+echo.syms         pollcount.s       printbin.s~       tiny.s
+echo.s~           pollcount.script  printbin1.script  tiny.script
+blade57(2)% make A=pollcount
+make: `pollcount.lnx' is up to date.
+blade57(3)% mtip -f pollcount.lnx
+For command help, type ~?
+For help on args, rerun without args
+Code starts at 0x100100
+Using board # 2 
+~resetting board #2!
+
+Setting console dev to COM2Console: colour EGA+ 80x25
+COM1 at 0x03f8 (irq = 4) is a 16550A
+COM2 at 0x02f8 (irq = 3) is a 16550A
+
+
+                 Welcome to UMB Tutor for the PC
+   UMB Tutor is a 32-bit protected-mode PC debugger/downloader,
+       based on Linux, UMB Tutor for m68k, and remote gdb.
+UMB Tutor is free software and you are welcome to distribute copies
+of it under certain conditions.  There is no warranty for this program.
+The copyright and warranty provisions follow the Gnu general public
+license, available for view in gdb and elsewhere.  Full sources available.
+--bugs, suggestions, questions to eoneil@cs.umb.edu
+
+Exception 3 at EIP=000578f3: Breakpoint
+Tutor> ~downloading pollcount.lnx
+....Done.
+
+Download done, setting EIP to 100100.
+Tutor> go 100100
+ABCDE
+Count 0 is       1
+Count 1 is      71
+Count 2 is     739
+Count 3 is     737
+Count 4 is     738
+Exception 3 at EIP=00100110: Breakpoint
+Tutor> ~q 
+Quit handler: 
+killing process 1538 Leaving board #2
+blade57(4)% exit
+script done on Sun Oct 11 17:54:44 2015
+blade57(15)% exit
+script done on Sun Oct 11 18:07:05 2015
